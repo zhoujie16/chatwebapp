@@ -127,6 +127,14 @@
 							创建群
 						</div>
 					</li>
+					<li @click="refreshFriendAndGroupListAction" class="aui-list-item">
+						<div class="aui-list-item-label-icon">
+							<i class="aui-iconfont aui-icon-camera"></i>
+						</div>
+						<div class="aui-list-item-inner">
+							刷新好友列表和群组列表
+						</div>
+					</li>
 					<li @click="closeChat" class="aui-list-item">
 						<div class="aui-list-item-label-icon">
 							<i class="aui-iconfont aui-icon-camera"></i>
@@ -161,7 +169,6 @@
 
 <script>
 	export default {
-		name: 'app',
 		data() {
 			return {
 				//显示模块
@@ -195,7 +202,7 @@
 				console.log('好友聊天信息 变化');
 				App.$emit('onChatMsgSuccess', arr);
 				App.computUnReadMsgNum();
-			},
+			}
 		},
 		methods: {
 			/**
@@ -203,7 +210,6 @@
 			 */
 			//收到文本消息触发
 			onTextMessage(message) {
-				console.log('收到文本消息触发==%o', message);
 				var self = this;
 				var res_msg = {
 					data: message.data,
@@ -224,11 +230,10 @@
 					App.groupChatArr.push(res_msg);
 				}
 				//保存本地
-				dbManager.saveChat(res_msg);
+				//dbManager.saveChat(res_msg);
 			},
 			//收到图片消息
 			onPictureMessage(message) {
-				console.log('收到图片消息触发==%o', message);
 				var self = this;
 				var res_msg = {
 					data: message.url, //
@@ -249,11 +254,10 @@
 					App.groupChatArr.push(res_msg);
 				}
 				//保存本地
-				dbManager.saveChat(res_msg);
+				//dbManager.saveChat(res_msg);
 			},
 			//收到 加好友请求
 			onPresenceTypeSubscribe(message) {
-				console.log('收到 一条 添加好友的请求 ');
 				/*{
 				 chatroom: false,
 				 code: null,
@@ -265,7 +269,7 @@
 				 to: "test4",
 				 toJid: "zj1406187962#layimtest_test4@easemob.com",
 				 type: "subscribe",
-				 }*/
+				}*/
 				message.isRead = false;
 				App.subscribes.push(message);
 			},
@@ -306,7 +310,10 @@
 					title: "正在登陆",
 				});
 				var self = this;
-				console.log('点击登录');
+				self.friendChatArr = [];
+				self.groupChatArr = [];
+				self.subscribes = [];
+				console.log('点击登录 删掉之前记录');
 				httpTool.login({
 					user: self.username,
 					pwd: self.password,
@@ -331,25 +338,15 @@
 			loginActionSuccess(userInfo) {
 				var self = this;
 				self.showItem = 0;
-				dbManager.createTable(self.username);
+				//dbManager.createTable(self.username);
 				//dbManager.setUserInfo(userInfo);
 				localStorage.setItem('user', self.username);
 				localStorage.setItem('pwd', self.password);
 				var self = this;
+				console.log('登陆成功');
 				self.isLogin = true;
-				self.friendChatArr = [];
-				self.groupChatArr = [];
-				self.subscribes = [];
 				//查询好友 //查询群组
-				toast.loading({
-					title: "获取好友列表",
-				});
-				setTimeout(function() {
-					self.getRosterAction();
-					setTimeout(function() {
-						self.getListGroupsAction();
-					}, 1000);
-				}, 1000);
+				self.refreshFriendAndGroupListAction()
 			},
 			//注册事件
 			registCilck(username, password) {
@@ -372,22 +369,6 @@
 
 					},
 
-				});
-			},
-			//获取好友列表
-			getRosterAction() {
-				var self = this;
-				httpTool.getRoster(function(arr) {
-					console.log('查询好友成功:%o', arr);
-					self.friends = arr;
-				});
-			},
-			//获取群组列表
-			getListGroupsAction() {
-				var self = this;
-				httpTool.getListGroups(function(arr) {
-					console.log('查询群组成功回调:%o', arr);
-					self.groups = arr;
 				});
 			},
 			//打开聊天页面
@@ -416,19 +397,8 @@
 			//打开添加好友页面
 			addFriendsAction() {
 				var self = this;
-				//如果参数过多，建议通过 object 方式传入
-				$.prompt({
-					title: '添加好友',
-					text: '输入好友ID',
-					input: '',
-					empty: false, // 是否允许为空
-					onOK: function(input) {
-						//点击确认
-						httpTool.addFriends(input);
-					},
-					onCancel: function() {
-						//点击取消
-					}
+				self.$router.push({
+					name: 'AddFriend'
 				});
 			},
 			//打开 创建群组页面
@@ -437,6 +407,25 @@
 				self.$router.push({
 					name: 'CreateGroup'
 				});
+			},
+			//刷新好友列表和群组列表
+			refreshFriendAndGroupListAction() {
+				var self = this;
+				//查询好友 //查询群组
+				toast.loading({
+					title: "获取好友和群组列表",
+				});
+				httpTool.getRoster(function(arr) {
+					console.log('查询好友成功:%o', arr);
+					self.friends = arr;
+					httpTool.getListGroups(function(arr) {
+						console.log('查询群组成功回调:%o', arr);
+						self.groups = arr;
+						toast.hide();
+						self.computUnReadMsgNum();
+					});
+				});
+
 			},
 			//统计 所有好友的 未读消息数量
 			computUnReadMsgNum() {

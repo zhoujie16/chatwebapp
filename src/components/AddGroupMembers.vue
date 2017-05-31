@@ -1,39 +1,45 @@
 <template>
 	<div class="full-screen">
-		<!--<div class="vux-header">-->
-			<!--<div @click="backAction" class="vux-header-left">-->
-				<!--<a class="vux-header-back"></a>-->
-				<!--<div class="left-arrow"></div>-->
-			<!--</div>-->
-			<!--<h1 class="vux-header-title">添加群员</h1>-->
-			<!--<div @click="AddMenbersAction" class="vux-header-right">-->
-				<!--<a class="">添加</a>-->
-			<!--</div>-->
-		<!--</div>-->
-		<!--<div class="scroll-content">-->
-			<!--<div class="weui-cells">-->
-				<!--&lt;!&ndash;好友cell&ndash;&gt;-->
-				<!--<div @click="cellClick(item)" v-for="(item,i) in friends" class="weui-cell">-->
-					<!--<div class="weui-cell__hd" style="position: relative;margin-right: 10px;">-->
-						<!--<img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAADYAAAA2CAMAAAC7m5rvAAAAllBMVEUAAAC/v7+qqqrHx8evr6/ExMS5ubmxsbGsrKysrKytra2pqam8vLy9vb2lpaXExMT////s7Oz8/Pz09PTu7u729vb5+fnp6enMzMzLy8vm5ub4+Pjj4+O3t7fx8fHb29vAwMDHx8ePj4/S0tLf39+rq6ulpaWSkpK7u7vY2NjR0dGnp6eenp6ampqysrLPz8+fn5+ioqKXtObzAAAAEHRSTlMA6wT4/e/f0KyZSy/z8mz4uKbH2gAAA6FJREFUSMellody2zAMhuXEGU6TVBgkbGp529np+79cKREUpbrxdfxnn7g+cYACkKku7m5vricPl4v5Yq5arWLJN14+TK5vbu8udLhCsyuHeY6QD0Q0rEHb765mA/DbJIw4j4XGybdIPV5q13lMC9NHnWvKpxhiAVBYPMX4ezffxSQnHmFoahFgkRpEmHCEMeWTdn8zygOnmAVhkxZZ1AImYdyOnvnJrrohrBiymF/3ZgGsYty1XV1kdy6MATKGnJRgoiAVuRRH/inhTe4uu9U1Q8MMmy0nOcdJ5bMwbEs9g9vsJg8yjq2UXxugdJYBtHKTXUeM64bO2c00bGP/dTbBIAIBERyIaFgTASHQyiS7hyC3KaHcQNSm2r2+vbwvBFRt91OjlfssXizZ+q2WjN3yqvXrcfWxmS/362lYGJfYjQm6zBah4InWbtRyy3UlGPaGvDxU6B8EvqVo9NgX2TwUGDosJzb7vQyPBHafxNSZ2zq9hXOdzYoJWM6Hyo5P0h4PkAcMwI5mAxOx/bvgGEOpfqBihoezoeSKLffWAA4xBLIvS8VywYR5RjFaix8PmDBs77+sa8XYDDA2ilVV9xbAiCF0cFUpZniASa6Yn0y5aICO8tMplkvCMGKbV8x7jqhbYSf8fI4YJgwUq46+FjmillIdK8UgYQUrtlvliaspUflqpxgXHbYiIhD/d77w+kG9oGkg1T5eiYhLImkbV2PsbUO96qcnStq8jbCwyFoX+TJPjhK8kpucv+gi66LfmwXF3peJMkQmcct3xcCeGmCxx55qDdBzuF8kA5yYW9bcUy3Wc7x2p+bOuQgYTJdKxctVBG65g4AVMMCoVgwOECjFlOMDKFbTbz+camcRilwxvS84rX79cPQztYrh51HM+DMtZPmGilkYOQUDiuX1iVPA44F7p2DGLghYZwP+8SJDjKdvADqbg+SCOtmyw9p94anDKwCDw7Pq8JJ7LduTga69rtaf0b3uIJyneAySe32AIPdc+r8D1bM6c23oulzvzB9S6BDnf1+HDifkUugYBCrT1OcCVd1QClQpLALQubDoHAGlsBiDMG3J0pMUthdzKhfw5LtLiUE4hnx0AgDNtnEQVZYQ5XyHf8jWasjXBAPBxgQDziQYFqwmGNmMlIrpDH+ZzihHs5A8+co4eeKUPEFKngKHIXnKvn0H++epmoWppoaP079JDL8//lsa+p9Jb0qx77sUexG0WmmhS7HvRyn2TxZ1zUyK+LY0AAAAAElFTkSuQmCC" style="width: 50px;">-->
-						<!--<span v-if="item.msgNum>0" class="weui-badge" style="position: absolute;top: -.4em;right: -.4em;">{{item.msgNum}}</span>-->
-					<!--</div>-->
-					<!--<div class="weui-cell__bd">-->
-						<!--<p>{{item.name}}</p>-->
-						<!--<p style="font-size: 13px;color: #999999;">提示</p>-->
-					<!--</div>-->
-					<!--<div v-show="item.isChecked" class="weui-cell__ft" style="font-size: 14px;">已选</div>-->
-				<!--</div>-->
+		<header class="aui-bar aui-bar-nav">
+			<a @click="backAction" class="aui-pull-left aui-btn">
+				<span class="aui-iconfont aui-icon-left"></span>返回
+			</a>
+			<div class="aui-title">添加群成员</div>
+			<a @click="AddMenbersAction" class="aui-pull-right aui-btn">
+				<span class="">添加</span>
+			</a>
+		</header>
+		<div class="aui-content">
+			<ul class="aui-list aui-media-list">
+				<li @click="cellClick(item)" v-for="(item,i) in friends" class="aui-list-item aui-list-item-middle">
+					<div class="aui-media-list-item-inner">
+						<div class="aui-list-item-media wechat-avatar">
+							<!--<div v-if="item.msgNum>0" class="aui-badge">{{item.msgNum}}</div>-->
+							<img src="http://i1.piimg.com/1949/6f7764a45a1d1a50.png">
+						</div>
+						<div class="aui-list-item-inner">
+							<div class="aui-list-item-text">
+								<div class="aui-list-item-title">{{item.id}}</div>
+								<div class="aui-list-item-right">
+									<i v-if="item.isChecked" class="aui-iconfont aui-icon-correct"></i>
+								</div>
+							</div>
+							<div class="aui-list-item-text aui-font-size-12">
 
-			<!--</div>-->
-		<!--</div>-->
+							</div>
+						</div>
+					</div>
+				</li>
+			</ul>
+		</div>
 	</div>
+
 </template>
 <script>
 	export default {
 		data() {
 			return {
-				routeData: {},
+				groupInfo: {},
 				friends: [],
 			};
 		},
@@ -54,18 +60,22 @@
 					}
 				});
 				if(arr.length == 0) {
-					$.alert("没有选择任何好友");
+					toast.fail({
+						title: "没有选择任何好友",
+						duration: 2000
+					});
 					return;
 				}
-				httpTool.addGroupMembers({
+				var option = {
 					list: arr,
-					roomId: self.routeData.id,
-				});
+					roomId: self.groupInfo.id
+				};
+				conn.addGroupMembers(option);
 			},
 		},
 		mounted() {
 			var self = this;
-			self.routeData = self.$route.params;
+			self.groupInfo = self.$route.params;
 			var arr_temp = JSON.parse(JSON.stringify(App.friends));
 			$.each(arr_temp, function(i, d) {
 				d.isChecked = false;
@@ -76,12 +86,5 @@
 	}
 </script>
 <style>
-	.scroll-content {
-		overflow: auto;
-		position: absolute;
-		top: 46px;
-		bottom: 0px;
-		left: 0px;
-		right: 0px;
-	}
+
 </style>

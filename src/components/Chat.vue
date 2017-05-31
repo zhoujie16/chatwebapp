@@ -14,7 +14,7 @@
         </header>
         <div id="chat-scroll-view" class="aui-content app-body" style="bottom: 80px">
             <section class="aui-chat">
-                <div class="aui-chat-header">2016年7月13日</div>
+                <!--<div class="aui-chat-header">2016年7月13日</div>-->
                 <div v-for="(msg,i) in msgArr" class="aui-chat-item"
                      :class="{'aui-chat-left':!msg.is_mine,'aui-chat-right':msg.is_mine}">
                     <div class="aui-chat-media">
@@ -26,8 +26,8 @@
                         </div>
                         <div class="aui-chat-content">
                             <div class="aui-chat-arrow"></div>
-                            <div v-show="msg.msg_type=='text'">{{msg.data}}</div>
-                            <img v-show="msg.msg_type=='image'" :src="msg.data"/>
+                            <div v-if="msg.msg_type=='text'">{{msg.data}}</div>
+                            <img v-if="msg.msg_type=='image'" :src="msg.data"/>
                         </div>
                         <div class="aui-chat-status aui-chat-status-refresh">
                             <i class="aui-iconfont aui-icon-correct aui-text-success"></i>
@@ -187,7 +187,7 @@
                             console.log('send private text Success');
                             msg_mine.status = '';
                             //保存信息
-                            dbManager.saveChat(msg_mine);
+                            //dbManager.saveChat(msg_mine);
                         },
                         fail: function () {
                             console.log('failed');
@@ -224,7 +224,7 @@
                             console.log('send room text success');
                             msg_mine.status = '';
                             //保存信息
-                            dbManager.saveChat(msg_mine);
+                            //dbManager.saveChat(msg_mine);
                         },
                         fail: function () {
                             console.log('failed');

@@ -5,6 +5,7 @@ import AddGroupMembers from './components/AddGroupMembers.vue'
 import Notice from './components/Notice.vue'
 import Search from './components/Search.vue'
 import GroupMenbers from './components/GroupMenbers.vue'
+import AddFriend from './components/AddFriend.vue'
 
 export default {
 	routes: [{
@@ -37,5 +38,9 @@ export default {
 		path: '/search',
 		name: 'Search',
 		component: Search
+	},{
+		path: '/addfriend',
+		name: 'AddFriend',
+		component: AddFriend
 	}]
 }

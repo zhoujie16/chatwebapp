@@ -3,47 +3,40 @@
 		<transition enter-active-class="animated fadeInRight" leave-active-class="animated fadeOutRight">
 			<router-view></router-view>
 		</transition>
-		<!--<div class="vux-header">-->
-			<!--<div @click="backAction" class="vux-header-left">-->
-				<!--<a class="vux-header-back"></a>-->
-				<!--<div class="left-arrow"></div>-->
-			<!--</div>-->
-			<!--<h1 class="vux-header-title">群管理</h1>-->
-		<!--</div>-->
-		<!--<div class="scroll-content">-->
-			<!--<div class="weui-cells">-->
-				<!--<div @click="queryRoomMemberAction" class="weui-cell">-->
-					<!--<div class="weui-cell__bd">-->
-						<!--<p>查询群成员</p>-->
-					<!--</div>-->
-					<!--<div class="weui-cell__ft"></div>-->
-				<!--</div>-->
-				<!--<div v-if="0" @click="queryGroupInfoAction" class="weui-cell">-->
-					<!--<div class="weui-cell__bd">-->
-						<!--<p>查询群信息</p>-->
-					<!--</div>-->
-					<!--<div class="weui-cell__ft"></div>-->
-				<!--</div>-->
-				<!--<div @click="AddGroupMembersAction" class="weui-cell">-->
-					<!--<div class="weui-cell__bd">-->
-						<!--<p>添加群成员</p>-->
-					<!--</div>-->
-					<!--<div class="weui-cell__ft"></div>-->
-				<!--</div>-->
-				<!--<div @click="destroyGroupAction" class="weui-cell">-->
-					<!--<div class="weui-cell__bd">-->
-						<!--<p>解散群</p>-->
-					<!--</div>-->
-					<!--<div class="weui-cell__ft"></div>-->
-				<!--</div>-->
-				<!--<div v-if="0" @click="leaveGroupAction" class="weui-cell">-->
-					<!--<div class="weui-cell__bd">-->
-						<!--<p>退出群</p>-->
-					<!--</div>-->
-					<!--<div class="weui-cell__ft"></div>-->
-				<!--</div>-->
-			<!--</div>-->
-		<!--</div>-->
+		<header class="aui-bar aui-bar-nav">
+			<a @click="backAction" class="aui-pull-left aui-btn">
+				<span class="aui-iconfont aui-icon-left"></span>返回
+			</a>
+			<div class="aui-title">群管理</div>
+		</header>
+		<div class="aui-content">
+			<ul class="aui-list aui-list-in">
+				<li @click="queryRoomMemberAction" class="aui-list-item">
+					<div class="aui-list-item-label-icon">
+						<i class="aui-iconfont aui-icon-home"></i>
+					</div>
+					<div class="aui-list-item-inner">
+						查询群成员
+					</div>
+				</li>
+				<li @click="AddGroupMembersAction" class="aui-list-item">
+					<div class="aui-list-item-label-icon">
+						<i class="aui-iconfont aui-icon-home"></i>
+					</div>
+					<div class="aui-list-item-inner">
+						添加群成员
+					</div>
+				</li>
+				<li @click="destroyGroupAction" class="aui-list-item">
+					<div class="aui-list-item-label-icon">
+						<i class="aui-iconfont aui-icon-home"></i>
+					</div>
+					<div class="aui-list-item-inner">
+						解散群
+					</div>
+				</li>
+			</ul>
+		</div>
 	</div>
 </template>
 
@@ -51,18 +44,8 @@
 	export default {
 		data() {
 			return {
-				//路由于传过来的信息 id  name  
-				routeData: {
-					id: "",
-					msgNum: "",
-					name: "",
-					type: "",
-				},
-
+				groupInfo: {},
 			};
-		},
-		mounted() {
-
 		},
 		methods: {
 			//返回
@@ -73,37 +56,46 @@
 			queryRoomMemberAction() {
 				var self = this;
 				this.$router.push({
-					name:'GroupMenbers',
-					params:self.routeData,
+					name: 'GroupMenbers',
+					params: self.groupInfo,
 				});
 			},
 			//查询群信息
-			queryGroupInfoAction() {
-				mui.alert('此功能等待开放...');
-				return;
-				var self = this;
-				httpTool.queryGroupInfo(self.routeData.id)
-			},
+			queryGroupInfoAction() {},
 			//添加群成员
 			AddGroupMembersAction() {
 				var self = this;
 				self.$router.push({
 					name: 'AddGroupMembers',
-					params: self.routeData,
+					params: self.groupInfo,
 				});
 			},
 			//解散群
 			destroyGroupAction() {
 				var self = this;
-				$.confirm({
-					title: '警告',
-					text: '是否解散该群',
-					onOK: function() {
-						httpTool.destroyGroup(self.routeData.id);
-					},
-					onCancel: function() {}
+				dialog.alert({
+					title: "是否解散群组(" + self.groupInfo.name + ")",
+					msg: '只有管理员才能解散',
+					buttons: ['取消', '解散']
+				}, function(ret) {
+					if(ret.buttonIndex == 2) {
+						var option = {
+							reason: 'Test Destroy Group',
+							roomId: self.groupInfo.id,
+							success: function() {
+								console.log('Destroy group success!');
+								toast.success({
+									title: "群组解散成功",
+									duration: 2000
+								});
+								setTimeout(function(){
+									App.refreshFriendAndGroupListAction();
+								},2000);
+							}
+						};
+						conn.destroyGroup(option);
+					}
 				});
-
 			},
 			//退出群
 			leaveGroupAction() {
@@ -112,8 +104,8 @@
 		},
 		mounted() {
 			var self = this;
-			self.routeData = self.$route.params;
-			console.log(self.routeData);
+			self.groupInfo = self.$route.params;
+			console.log(JSON.stringify(self.groupInfo));
 		},
 	}
 </script>
