@@ -46,6 +46,7 @@
 			handlePresenceAction(msg) {
 				if(msg.type == 'subscribe') {
 					msg.isRead = true;
+					App.computUnReadSubscribes();
 					dialog.alert({
 						title: "是否同意添加对方为好友?",
 						buttons: ['拒绝', '同意']

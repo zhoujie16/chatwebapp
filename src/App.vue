@@ -111,6 +111,7 @@
 					<li @click="openNoticeView" class="aui-list-item">
 						<div class="aui-list-item-label-icon">
 							<i class="aui-iconfont aui-icon-edit"></i>
+							<div v-show="subscribesUnreadNum" class="aui-dot"></div>
 						</div>
 						<div class="aui-list-item-inner">
 							新通知
@@ -154,16 +155,18 @@
 
 		<footer class="aui-bar aui-bar-tab" id="footer">
 			<div class="aui-bar-tab-item" :class="{'aui-active':showItem===0}" @click="showItem=0" tapmode>
+				<div v-show="friendsUnReadNum" class="aui-badge">{{friendsUnReadNum}}</div>
 				<i class="aui-iconfont aui-icon-my"></i>
 				<div class="aui-bar-tab-label">好友</div>
 			</div>
 			<div class="aui-bar-tab-item" :class="{'aui-active':showItem===1}" @click="showItem=1" tapmode>
-				<!--<div class="aui-badge">99</div>-->
+				<div v-show="groupsUnReadNum" class="aui-badge">{{groupsUnReadNum}}</div>
 				<i class="aui-iconfont aui-icon-comment"></i>
 				<div class="aui-bar-tab-label">群聊</div>
 			</div>
 			<div class="aui-bar-tab-item" :class="{'aui-active':showItem===2}" @click="showItem=2" tapmode>
-				<!--<div class="aui-dot"></div>-->
+				<div v-show="subscribesUnreadNum" class="aui-dot"></div>
+				<!--<div class="aui-badge">99</div>-->
 				<i class="aui-iconfont aui-icon-paper"></i>
 				<div class="aui-bar-tab-label">更多</div>
 			</div>
@@ -194,6 +197,10 @@
 				friends: [],
 				//群组列表
 				groups: [],
+				friendsUnReadNum: 0,
+				groupsUnReadNum: 0,
+				subscribesUnreadNum: 0,
+
 			};
 		},
 		watch: {
@@ -208,7 +215,12 @@
 				console.log('好友聊天信息 变化');
 				App.$emit('onChatMsgSuccess', arr);
 				App.computUnReadMsgNum();
-			}
+			},
+			//监听添加好友请求
+			subscribes: function(arr, oldArr) {
+				console.log('添加好友请求 变化');
+				App.computUnReadSubscribes();
+			},
 		},
 		methods: {
 			/**
@@ -441,12 +453,15 @@
 			//统计 所有好友的 未读消息数量
 			computUnReadMsgNum() {
 				var self = this;
+				self.friendsUnReadNum = 0;
+				self.groupsUnReadNum = 0;
 				//好友消息 未读数
 				$.each(self.friends, function(i, friend) {
 					var num = 0;
 					$.each(App.friendChatArr, function(j, msg) {
 						if(msg.from == friend.id && msg.is_read == false) {
 							num++;
+							self.friendsUnReadNum++;
 						}
 					});
 					friend.msgNum = num;
@@ -457,9 +472,20 @@
 					$.each(App.groupChatArr, function(j, msg) {
 						if(msg.to == group.id && msg.is_read == false) {
 							num++;
+							self.groupsUnReadNum++;
 						}
 					});
 					group.msgNum = num;
+				});
+			},
+			//
+			computUnReadSubscribes() {
+				var self = this;
+				self.subscribesUnreadNum = 0;
+				$.each(self.subscribes, function(i, msg) {
+					if(msg.isRead == false) {
+						self.subscribesUnreadNum++;
+					}
 				});
 			},
 			closeChat() {
