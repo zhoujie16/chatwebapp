@@ -29,12 +29,17 @@
 						</li>
 					</ul>
 				</div>
-				<div @click="loginAction" class="aui-btn aui-btn-primary aui-btn-block">登录</div>
-				<!--<div @click="loginAction" class="aui-btn aui-btn-primary">登录</div>-->
-				<!--<div @click="registAction" class="aui-btn aui-btn-info">注册</div>-->
+
+				<div @click="loginAction" class="aui-btn aui-btn-primary aui-btn-block aui-btn-sm" style="margin-bottom: 10px;">登录</div>
+				<div @click="registAction" class="aui-btn aui-btn-primary aui-btn-block aui-btn-sm">注册</div>
 			</div>
 		</transition>
 		<header class="aui-bar aui-bar-nav">{{username}}</header>
+		<div v-if="isOffLine" class="aui-tips aui-margin-b-15" id="tips-1" style="background-color: rgba(229,28,35,.6);">
+			<i class="aui-iconfont aui-icon-info"></i>
+			<div class="aui-tips-title">本机网络掉线</div>
+			<i class="aui-iconfont aui-icon-close"></i>
+		</div>
 		<div class="aui-content app-body">
 			<div class="aui-content aui-hide" :class="{'aui-show':showItem==0}">
 				<ul class="aui-list aui-media-list">
@@ -171,6 +176,7 @@
 	export default {
 		data() {
 			return {
+				isOffLine: false,
 				//显示模块
 				showItem: 0,
 				//登陆成功后的用户信息
@@ -208,6 +214,21 @@
 			/**
 			 * 和环信监听的事件绑定
 			 */
+			//网络连接成功
+			onOnline() {
+				console.warn('本机网络连接成功');
+				this.isOffLine = false;
+			},
+			//网络掉线
+			onOffline() {
+				console.warn('本机网络掉线');
+				this.isOffLine = true;
+				dialog.alert({
+					title: '警告',
+					msg: '本机网络掉线！',
+					buttons: ['确定'],
+				});
+			},
 			//收到文本消息触发
 			onTextMessage(message) {
 				var self = this;
@@ -289,19 +310,8 @@
 			//
 			registAction() {
 				var self = this;
-				$.login({
-					title: '注册',
-					text: '请输入用户名和密码',
-					username: '', // 默认用户名
-					password: '', // 默认密码
-					onOK: function(username, password) {
-						//点击确认
-						self.registCilck(username, password);
-					},
-					onCancel: function() {
-						//点击取消
-
-					}
+				self.$router.push({
+					name: 'Regist',
 				});
 			},
 			//登录事件
@@ -324,13 +334,14 @@
 							self.loginActionSuccess(userInfo);
 						}, 1000);
 					},
-					error: function() {
+					error: function(err) {
 						toast.hide();
-						console.log('登录失败')
-						toast.fail({
-							title: "登录失败",
-							duration: 2000
+						dialog.alert({
+							title: '警告',
+							msg: '登录失败',
+							buttons: ['确定']
 						});
+
 					}
 				});
 			},
